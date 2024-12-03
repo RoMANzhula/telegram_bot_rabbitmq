@@ -1,0 +1,22 @@
+1. run Docker Desktop (Windows 10)
+2. in terminal run command (without volume):
+    docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq rabbitmq:management
+
+    with volume:
+    docker run -d -p 5672:5672 -p 15672:15672 \
+    --name rabbitmq \
+    -v E:\docker-data\rabbitmq\data:/var/lib/rabbitmq \
+    rabbitmq:management
+
+
+3. check running containers:
+    docker ps
+4. stop container:
+    docker stop rabbitmq
+            or with container's ID
+    docker stop fa61c26e1777
+
+5. remove container (only after stop it)
+    docker rm rabbitmq
+
+
