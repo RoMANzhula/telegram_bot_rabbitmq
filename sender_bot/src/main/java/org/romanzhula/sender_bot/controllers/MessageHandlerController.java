@@ -95,7 +95,7 @@ public class MessageHandlerController {
         setAnswerViewForClient(sendMessage);
     }
 
-    private void setAnswerViewForClient(SendMessage sendMessage) {
+    public void setAnswerViewForClient(SendMessage sendMessage) {
         generalBot.sendAnswerMessage(sendMessage);
     }
 
