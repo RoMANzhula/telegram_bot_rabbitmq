@@ -93,12 +93,16 @@ public class RabbitConfig {
 
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            CachingConnectionFactory cachingConnectionFactory,
             ErrorHandler rabbitErrorHandler
     ) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(cachingConnectionFactory);
+        factory.setMessageConverter(jsonMessageConverter());
         factory.setErrorHandler(rabbitErrorHandler);
         return factory;
     }
+
 
     public String getUsername() {
         return username;
@@ -127,4 +131,5 @@ public class RabbitConfig {
     public String getQueueNameAnswer() {
         return queueNameAnswer;
     }
+
 }
