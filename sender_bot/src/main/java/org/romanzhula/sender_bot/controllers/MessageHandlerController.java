@@ -54,11 +54,11 @@ public class MessageHandlerController {
     private void processMessagesByType(Update update) {
         var message = update.getMessage();
 
-        if (message.getText() != null) {
+        if (message.hasText()) {
             processMessageTextType(update);
-        } else if (message.getPhoto() != null) {
+        } else if (message.hasPhoto()) {
             processMessagePhotoType(update);
-        } else if (message.getDocument() != null) {
+        } else if (message.hasDocument()) {
             processMessageDocumentType(update);
         } else {
             processUnsupportedMessageType(update);
