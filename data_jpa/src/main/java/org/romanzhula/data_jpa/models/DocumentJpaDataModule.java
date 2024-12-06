@@ -28,7 +28,7 @@ public class DocumentJpaDataModule {
 
     private String mimeType;
 
-    private Long fileLength;
+    private Long fileSize;
 
 
     @Override
@@ -41,12 +41,13 @@ public class DocumentJpaDataModule {
                 Objects.equals(name, that.name) &&
                 Objects.equals(binaryData, that.binaryData) &&
                 Objects.equals(mimeType, that.mimeType) &&
-                Objects.equals(fileLength, that.fileLength)
+                Objects.equals(fileSize, that.fileSize)
         ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(telegramId, name, binaryData, mimeType, fileLength);
+        return Objects.hash(telegramId, name, binaryData, mimeType, fileSize);
     }
+
 }
