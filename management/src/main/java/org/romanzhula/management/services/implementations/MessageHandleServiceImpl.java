@@ -10,6 +10,7 @@ import org.romanzhula.management.repositories.MessageDataRepository;
 import org.romanzhula.management.services.MessageHandleService;
 import org.romanzhula.management.services.ProducerService;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.facilities.filedownloader.DownloadFileException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -50,7 +51,9 @@ public class MessageHandleServiceImpl implements MessageHandleService {
             throw new IllegalArgumentException("Input data cannot be null!");
         }
 
-        if (CANCEL.equals(text)) {
+        TelegramCommands telegramCommand = fromCommand(text);
+
+        if (CANCEL.equals(telegramCommand)) {
             output = processStop(userFromJpaData);
         } else {
             switch (userState) {
@@ -80,10 +83,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         UserJpaDataModule userFromJpaData = findOrSaveUser(update);
         Long chatId = update.getMessage().getChatId();
 
-        if (isNotAllowToBeSent(chatId, userFromJpaData)) {
-            log.error("Does not allow content to be sent.");
-            return;
-        }
+        if (checkAllowContent(chatId, userFromJpaData)) return;
 
         // TODO: add photo loading method
         String answer = "Photo has been successfully uploaded. Download link: ...";
@@ -97,14 +97,27 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         UserJpaDataModule userFromJpaData = findOrSaveUser(update);
         Long chatId = update.getMessage().getChatId();
 
+        if (checkAllowContent(chatId, userFromJpaData)) return;
+
+        try {
+            // TODO: add document loading method
+            String answer = "Document has been successfully uploaded. Download link: ...";
+
+            sendAnswer(answer, chatId);
+        } catch (DownloadFileException exception) {
+            String errorMessage = "Error! Download fatal. Try again later.";
+            log.error(errorMessage);
+
+            sendAnswer(errorMessage, chatId);
+        }
+    }
+
+    private boolean checkAllowContent(Long chatId, UserJpaDataModule userFromJpaData) {
         if (isNotAllowToBeSent(chatId, userFromJpaData)) {
             log.error("Does not allow content to be sent.");
-            return;
+            return true;
         }
-
-        // TODO: add document loading method
-        String answer = "Document has been successfully uploaded. Download link: ...";
-        sendAnswer(answer, chatId);
+        return false;
     }
 
     private boolean isNotAllowToBeSent(Long chatId, UserJpaDataModule userFromJpaData) {
@@ -128,18 +141,19 @@ public class MessageHandleServiceImpl implements MessageHandleService {
     }
 
     private String processTelegramCommand(UserJpaDataModule userFromJpaData, String command) {
+        TelegramCommands telegramCommand = fromCommand(command);
 
-        if (REGISTRATION.equals(command)) {
+        if (REGISTRATION.equals(telegramCommand)) {
             log.info("Sorry. Currently not work!");
             return "Sorry. Currently not work!";
-        } else if (HELP.equals(command)) {
+        } else if (HELP.equals(telegramCommand)) {
             log.info("User entered the command '/help'");
             return commandHelp();
-        } else if (START.equals(command)) {
+        } else if (START.equals(telegramCommand)) {
             log.info("User entered the command '/start'");
             return "Hello in our Bot. Please input '/help' to look for all common commands.";
         } else {
-            log.warn("Received unknown command: {}", command);
+            log.warn("Received unknown command: {}", telegramCommand);
             return "Unknown command! Please input '/cancel' and try again. Or use '/help'.";
         }
 
