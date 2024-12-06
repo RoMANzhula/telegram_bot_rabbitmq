@@ -15,8 +15,14 @@ public enum TelegramCommands {
     }
 
 
-    public boolean equals(String command) {
-        return this.toString().equals(command);
+    public static TelegramCommands fromCommand(String command) {
+        for (TelegramCommands element : TelegramCommands.values()) {
+            if (element.command.equals(command)) {
+                return element;
+            }
+        }
+
+        return null;
     }
 
     @Override
