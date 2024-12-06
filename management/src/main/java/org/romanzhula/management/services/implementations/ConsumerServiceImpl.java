@@ -6,11 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.romanzhula.management.services.ConsumerService;
 import org.romanzhula.management.services.MessageHandleService;
-import org.romanzhula.management.services.ProducerService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Log4j
@@ -38,12 +35,16 @@ public class ConsumerServiceImpl implements ConsumerService {
     @RabbitListener(queues = "${rabbitmq.queue.name.document}")
     public void consumeDocumentMessageUpdate(Update update) {
         log.debug("Manager: Document msg is received successfully.");
+
+        messageHandleService.processDocumentMessage(update);
     }
 
     @Override
     @RabbitListener(queues = "${rabbitmq.queue.name.photo}")
     public void consumePhotoMessageUpdate(Update update) {
         log.debug("Manager: Photo msg is received successfully.");
+
+        messageHandleService.processPhotoMessage(update);
     }
 
 }
