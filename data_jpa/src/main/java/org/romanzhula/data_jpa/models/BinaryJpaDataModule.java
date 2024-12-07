@@ -19,6 +19,7 @@ public class BinaryJpaDataModule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
     private byte[] convertedFile;
 
 
