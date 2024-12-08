@@ -30,6 +30,8 @@ public class DocumentJpaDataModule {
 
     private Long fileSize;
 
+    private String hashids;
+
 
     @Override
     public boolean equals(Object o) {
