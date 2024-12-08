@@ -1,7 +1,6 @@
 package org.romanzhula.management.services.implementations;
 
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.hashids.Hashids;
 import org.json.JSONObject;
 import lombok.extern.log4j.Log4j;
@@ -29,7 +28,7 @@ import java.net.MalformedURLException;
 
 @RequiredArgsConstructor
 @Log4j
-@Service
+@Service("fileServiceManagement")
 public class FileServiceImpl implements FileService {
 
     @Value("${telegram.bot.token}")
@@ -60,7 +59,15 @@ public class FileServiceImpl implements FileService {
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             BinaryJpaDataModule persistentBinaryData = getPersistentBinaryData(responseEntity);
             DocumentJpaDataModule transientDocumentJpaDataModule =
-                    buildTransientDocumentJpaDataModule(document, persistentBinaryData);
+                    buildTransientDocumentJpaDataModule(document, persistentBinaryData)
+            ;
+
+            DocumentJpaDataModule savedDocument =
+                    documentJpaDataModuleRepository.save(transientDocumentJpaDataModule)
+            ;
+
+            String hashId = hashids.encode(savedDocument.getId());
+            savedDocument.setHashids(hashId);
 
             return documentJpaDataModuleRepository.save(transientDocumentJpaDataModule);
         } else {
@@ -82,6 +89,13 @@ public class FileServiceImpl implements FileService {
             BinaryJpaDataModule persistentBinaryData = getPersistentBinaryData(responseEntity);
             PhotoJpaDataModule transientPhotoJpaDataModule =
                     buildTransientPhotoJpaDataModule(photoFromBot, persistentBinaryData);
+
+            PhotoJpaDataModule savedPhoto =
+                    photoJpaDataModuleRepository.save(transientPhotoJpaDataModule)
+                    ;
+
+            String hashId = hashids.encode(savedPhoto.getId());
+            savedPhoto.setHashids(hashId);
 
             return photoJpaDataModuleRepository.save(transientPhotoJpaDataModule);
         } else {
