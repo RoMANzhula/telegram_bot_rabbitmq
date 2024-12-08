@@ -26,6 +26,8 @@ public class PhotoJpaDataModule {
 
     private Integer fileLength;
 
+    private String hashids;
+
 
     @Override
     public boolean equals(Object o) {
