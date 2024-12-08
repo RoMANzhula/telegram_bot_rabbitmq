@@ -1,12 +1,16 @@
 package org.romanzhula.management.services.implementations;
 
 import lombok.extern.slf4j.Slf4j;
+import org.romanzhula.data_jpa.models.DocumentJpaDataModule;
+import org.romanzhula.data_jpa.models.PhotoJpaDataModule;
 import org.romanzhula.data_jpa.models.UserJpaDataModule;
 import org.romanzhula.data_jpa.models.enums.UserState;
 import org.romanzhula.data_jpa.repositories.UserJpaDataModuleRepository;
+import org.romanzhula.management.enums.DownloadLinkType;
 import org.romanzhula.management.enums.TelegramCommands;
 import org.romanzhula.management.models.MessageData;
 import org.romanzhula.management.repositories.MessageDataRepository;
+import org.romanzhula.management.services.FileService;
 import org.romanzhula.management.services.MessageHandleService;
 import org.romanzhula.management.services.ProducerService;
 import org.springframework.stereotype.Service;
@@ -26,15 +30,17 @@ public class MessageHandleServiceImpl implements MessageHandleService {
     private final MessageDataRepository messageDataRepository;
     private final ProducerService producerService;
     private final UserJpaDataModuleRepository userJpaDataModuleRepository;
+    private final FileService fileService;
 
     public MessageHandleServiceImpl(
             MessageDataRepository messageDataRepository,
             ProducerService producerService,
-            UserJpaDataModuleRepository userJpaDataModuleRepository
-    ) {
+            UserJpaDataModuleRepository userJpaDataModuleRepository,
+            FileService fileService) {
         this.messageDataRepository = messageDataRepository;
         this.producerService = producerService;
         this.userJpaDataModuleRepository = userJpaDataModuleRepository;
+        this.fileService = fileService;
     }
 
     @Override
@@ -85,9 +91,19 @@ public class MessageHandleServiceImpl implements MessageHandleService {
 
         if (checkAllowContent(chatId, userFromJpaData)) return;
 
-        // TODO: add photo loading method
-        String answer = "Photo has been successfully uploaded. Download link: ...";
-        sendAnswer(answer, chatId);
+        try {
+            PhotoJpaDataModule photo = fileService.processPhoto(update.getMessage());
+            String downloadLink = fileService.generateLink(photo.getId(), DownloadLinkType.GET_PHOTO);
+            String answer = "Photo has been successfully uploaded. Download link: " + downloadLink;
+
+            sendAnswer(answer, chatId);
+        } catch (RuntimeException exception) {
+            log.error("Sorry! Photo not downloaded. Please try again later. :{}", exception.getMessage());
+            String errorMessage = "Sorry! Photo not downloaded. Please try again later.";
+
+            sendAnswer(errorMessage, chatId);
+        }
+
     }
 
     @Override
@@ -100,8 +116,9 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         if (checkAllowContent(chatId, userFromJpaData)) return;
 
         try {
-            // TODO: add document loading method
-            String answer = "Document has been successfully uploaded. Download link: ...";
+            DocumentJpaDataModule document = fileService.processDocument(update.getMessage());
+            String downloadLink = fileService.generateLink(document.getId(), DownloadLinkType.GET_DOCUMENT);
+            String answer = "Document has been successfully uploaded. Download link: " + downloadLink;
 
             sendAnswer(answer, chatId);
         } catch (DownloadFileException exception) {
