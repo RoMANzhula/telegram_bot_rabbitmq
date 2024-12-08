@@ -1,9 +1,11 @@
 package org.romanzhula.management.configurations;
 
+import jakarta.annotation.PostConstruct;
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class ManagementConfig {
@@ -12,7 +14,8 @@ public class ManagementConfig {
     private String salt;
 
     @Bean
-    public Hashids getHashId() {
+    @Primary
+    public Hashids hashids() {
         int minHashLength = 10;
 
         return new Hashids(salt, minHashLength);
