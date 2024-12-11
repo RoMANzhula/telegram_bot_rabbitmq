@@ -32,24 +32,16 @@ public class MailSenderServiceImpl implements MailSenderService {
     @Value("${spring.mail.password}")
     private String password;
 
-//    @Value("${spring.mail.properties.mail.smtp.auth}")
-//    private String auth;
-//
-//    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
-//    private String starttlsEnable;
-
     @Value("${spring.mail.protocol}")
     private String protocol;
 
     @Value("${mail.debug}")
     private String debug;
 
-//    @Value("${spring.mail.properties.mail.smtp.ssl.trust}")
-//    private String sslTrustHost;
 
     @Override
     public void send(MailDataJpaDataModule mailData) {
-//        validateMailProperties();
+        validateMailProperties();
 
         JavaMailSenderImpl javaMailSender = configureMailSender();
 
@@ -92,39 +84,28 @@ public class MailSenderServiceImpl implements MailSenderService {
     private String getActivationMailBody(String id) {
         return String.format("Follow the link to complete registration:\n%s", activationUri.replace("{id}", id));
     }
-//
-//    public void validateMailProperties() {
-//        if (Objects.isNull(host) || host.trim().isEmpty()) {
-//            throw new IllegalArgumentException("Mail host must be provided");
-//        }
-//
-//        if (port <= 0 || port > 65535) {
-//            throw new IllegalArgumentException("Invalid port number: " + port);
-//        }
-//
-//        if (Objects.isNull(username) || username.trim().isEmpty()) {
-//            throw new IllegalArgumentException("Mail username must be provided");
-//        }
-//
-//        if (Objects.isNull(password) || password.trim().isEmpty()) {
-//            throw new IllegalArgumentException("Mail password must be provided");
-//        }
-//
-//        if (Objects.isNull(auth) || auth.trim().isEmpty()) {
-//            throw new IllegalArgumentException("SMTP authentication must be enabled (true/false)");
-//        }
-//
-//        if (Objects.isNull(starttlsEnable) || starttlsEnable.trim().isEmpty()) {
-//            throw new IllegalArgumentException("SMTP StartTLS must be enabled (true/false)");
-//        }
-//
-//        if (Objects.isNull(protocol) || protocol.trim().isEmpty()) {
-//            throw new IllegalArgumentException("Mail transport protocol must be specified");
-//        }
-//
-//        if (Objects.isNull(sslTrustHost) || sslTrustHost.trim().isEmpty()) {
-//            throw new IllegalArgumentException("SSL trust host must be specified if using SSL");
-//        }
-//    }
+
+    public void validateMailProperties() {
+        if (Objects.isNull(host) || host.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mail host must be provided");
+        }
+
+        if (port <= 0 || port > 65535) {
+            throw new IllegalArgumentException("Invalid port number: " + port);
+        }
+
+        if (Objects.isNull(username) || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mail username must be provided");
+        }
+
+        if (Objects.isNull(password) || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mail password must be provided");
+        }
+
+        if (Objects.isNull(protocol) || protocol.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mail transport protocol must be specified");
+        }
+
+    }
 
 }
