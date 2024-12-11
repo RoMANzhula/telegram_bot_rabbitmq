@@ -1,6 +1,7 @@
 package org.romanzhula.rest_dispatcher.exception_handlers;
 
 import org.romanzhula.rest_dispatcher.exceptions.InternalServerException;
+import org.romanzhula.rest_dispatcher.exceptions.InvalidUserIdException;
 import org.romanzhula.rest_dispatcher.exceptions.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InternalServerException.class)
     public ResponseEntity<?> handleInternalServerError(InternalServerException ex) {
         return ResponseEntity.internalServerError().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidUserIdException.class)
+    public ResponseEntity<?> handleInvalidUserId(InvalidUserIdException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
 }
