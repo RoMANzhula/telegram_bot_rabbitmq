@@ -2,7 +2,7 @@ package org.romanzhula.management.enums;
 
 public enum DownloadLinkType {
 
-    GET_DOCUMENT("file/get-doc"),
+    GET_DOCUMENT("file/get-document"),
     GET_PHOTO("file/get-photo")
     ;
 
