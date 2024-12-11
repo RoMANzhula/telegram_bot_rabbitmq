@@ -108,7 +108,7 @@ public class FileServiceImpl implements FileService {
     public String generateLink(Long fileId, DownloadLinkType downloadLinkType) {
         String hashId = hashids.encode(fileId);
 
-        return downloadLinkAddress + "/api" + downloadLinkType + "?id=" + hashId;
+        return downloadLinkAddress + "/api/" + downloadLinkType + "?id=" + hashId;
     }
 
     private PhotoJpaDataModule buildTransientPhotoJpaDataModule(
