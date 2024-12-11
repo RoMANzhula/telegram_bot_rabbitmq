@@ -15,13 +15,13 @@ public class FileController {
 
 
     @GetMapping("/get-document")
-    public ResponseEntity<?> getDocument(@RequestParam String documentId) {
-        return fileService.prepareDocumentResponse(documentId);
+    public ResponseEntity<?> getDocument(@RequestParam String id) {
+        return fileService.prepareDocumentResponse(id);
     }
 
     @GetMapping("/get-photo")
-    public ResponseEntity<?> getPhoto(@RequestParam String photoId) {
-        return fileService.preparePhotoResponse(photoId);
+    public ResponseEntity<?> getPhoto(@RequestParam String id) {
+        return fileService.preparePhotoResponse(id);
     }
 
 }
