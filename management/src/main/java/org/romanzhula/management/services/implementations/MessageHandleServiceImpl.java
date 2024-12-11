@@ -1,5 +1,6 @@
 package org.romanzhula.management.services.implementations;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.romanzhula.data_jpa.models.DocumentJpaDataModule;
 import org.romanzhula.data_jpa.models.PhotoJpaDataModule;
@@ -11,6 +12,7 @@ import org.romanzhula.management.enums.TelegramCommands;
 import org.romanzhula.management.models.MessageData;
 import org.romanzhula.management.repositories.MessageDataRepository;
 import org.romanzhula.management.services.FileService;
+import org.romanzhula.management.services.MailUserService;
 import org.romanzhula.management.services.MessageHandleService;
 import org.romanzhula.management.services.ProducerService;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.util.Optional;
+
 import static org.romanzhula.data_jpa.models.enums.UserState.COMMON_STATE;
 import static org.romanzhula.management.enums.TelegramCommands.*;
 
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class MessageHandleServiceImpl implements MessageHandleService {
 
@@ -31,17 +36,8 @@ public class MessageHandleServiceImpl implements MessageHandleService {
     private final ProducerService producerService;
     private final UserJpaDataModuleRepository userJpaDataModuleRepository;
     private final FileService fileService;
+    private final MailUserService mailUserService;
 
-    public MessageHandleServiceImpl(
-            MessageDataRepository messageDataRepository,
-            ProducerService producerService,
-            UserJpaDataModuleRepository userJpaDataModuleRepository,
-            FileService fileService) {
-        this.messageDataRepository = messageDataRepository;
-        this.producerService = producerService;
-        this.userJpaDataModuleRepository = userJpaDataModuleRepository;
-        this.fileService = fileService;
-    }
 
     @Override
     public void processTextMessage(Update update) {
@@ -67,7 +63,8 @@ public class MessageHandleServiceImpl implements MessageHandleService {
                     output = processTelegramCommand(userFromJpaData, text);
                 }
                 case WAIT_EMAIL_STATE -> {
-                    log.info("You need to add your email!"); // TODO: change to method for MailSender
+                    log.info("You need to add your email!");
+                    output = mailUserService.setUserEmail(userFromJpaData, text);
                 }
                 default -> {
                     log.error("Unknown command: {}", userState);
@@ -162,7 +159,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
 
         if (REGISTRATION.equals(telegramCommand)) {
             log.info("Sorry. Currently not work!");
-            return "Sorry. Currently not work!";
+            return mailUserService.registerUser(userFromJpaData);
         } else if (HELP.equals(telegramCommand)) {
             log.info("User entered the command '/help'");
             return commandHelp();
@@ -211,17 +208,16 @@ public class MessageHandleServiceImpl implements MessageHandleService {
     private UserJpaDataModule findOrSaveUser(Update update) {
         User telegramUser = update.getMessage().getFrom();
 
-        UserJpaDataModule persistentUserFromDataJpaModule =
+        Optional<UserJpaDataModule> persistentUserFromDataJpaModule =
                 userJpaDataModuleRepository.findByTelegramId(telegramUser.getId());
 
-        if (persistentUserFromDataJpaModule == null) {
+        if (persistentUserFromDataJpaModule.isEmpty()) {
             UserJpaDataModule transientUser = UserJpaDataModule.builder()
                     .telegramId(telegramUser.getId())
                     .firstName(telegramUser.getFirstName())
                     .lastName(telegramUser.getLastName())
                     .userName(telegramUser.getUserName())
-                    // TODO: change to false after added MailSender
-                    .isActive(true)
+                    .isActive(false)
                     .userState(COMMON_STATE)
                     .build()
             ;
@@ -229,7 +225,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
             return userJpaDataModuleRepository.save(transientUser);
         }
 
-        return persistentUserFromDataJpaModule;
+        return persistentUserFromDataJpaModule.get();
     }
 
 }
