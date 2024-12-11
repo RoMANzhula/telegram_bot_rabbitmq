@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ErrorHandler;
 
-import static org.romanzhula.rabbitmq_buffer.models.RabbitmqQueue.*;
 
 @Log4j
 @Configuration
