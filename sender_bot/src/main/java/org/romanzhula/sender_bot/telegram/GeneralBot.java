@@ -4,14 +4,17 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j;
 import org.romanzhula.sender_bot.controllers.MessageHandlerController;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+
 @Log4j
 @Component
-public class GeneralBot extends TelegramLongPollingBot {
+public class GeneralBot extends TelegramWebhookBot {
 
     private final BotSettings botSettings;
     private final MessageHandlerController messageHandlerController;
@@ -21,7 +24,6 @@ public class GeneralBot extends TelegramLongPollingBot {
             MessageHandlerController messageHandlerController
     ) {
         super(botSettings.getBotToken());
-
         this.botSettings = botSettings;
         this.messageHandlerController = messageHandlerController;
     }
@@ -29,42 +31,45 @@ public class GeneralBot extends TelegramLongPollingBot {
     @PostConstruct
     public void init() {
         messageHandlerController.registerBot(this);
+        setWebhookAsync();
     }
 
-    @Override
-    public void onUpdateReceived(Update update) {
-//        if (update.hasMessage() && update.getMessage().hasText()) {
-//            var message = update.getMessage();
-//            var chatId = message.getChatId();
-//            log.debug("chatId_" + chatId + ": " + message.getText());
-//
-//            var response = new SendMessage();
-//            response.setChatId(chatId.toString());
-//            response.setText("It's message from GeneralBot.class. Testing... answer to your message.");
-//
-//            sendAnswerMessage(response);
-//
-//        } else {
-//            log.debug("Received update: " + update);
-//        }
-
-        messageHandlerController.processUpdate(update);
-
+    private void setWebhookAsync() {
+        try {
+            SetWebhook webhook = SetWebhook.builder()
+                    .url(botSettings.getBotUri())
+                    .build();
+            this.setWebhook(webhook);
+        } catch (TelegramApiException e) {
+            log.error("Failed to set webhook: " + e.getMessage());
+        }
     }
 
     public void sendAnswerMessage(SendMessage message) {
-        if (message != null) {
-            try {
-                execute(message);
-            } catch (TelegramApiException exception) {
-                log.error(exception);
-            }
+        if (message == null) {
+            log.warn("Attempted to send a null message");
+            return;
+        }
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error("Failed to send message: {}" + e.getMessage(), e);
         }
     }
 
     @Override
     public String getBotUsername() {
         return botSettings.getBotName();
+    }
+
+    @Override
+    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+        return null; // We do not use this method
+    }
+
+    @Override
+    public String getBotPath() {
+        return "/update";
     }
 
 }
