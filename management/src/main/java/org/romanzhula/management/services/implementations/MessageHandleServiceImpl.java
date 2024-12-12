@@ -15,6 +15,7 @@ import org.romanzhula.management.services.FileService;
 import org.romanzhula.management.services.MailUserService;
 import org.romanzhula.management.services.MessageHandleService;
 import org.romanzhula.management.services.ProducerService;
+import org.romanzhula.management.utils.ShorterUrl;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.facilities.filedownloader.DownloadFileException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -37,6 +38,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
     private final UserJpaDataModuleRepository userJpaDataModuleRepository;
     private final FileService fileService;
     private final MailUserService mailUserService;
+    private final ShorterUrl shorterUrl;
 
 
     @Override
@@ -91,7 +93,8 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         try {
             PhotoJpaDataModule photo = fileService.processPhoto(update.getMessage());
             String downloadLink = fileService.generateLink(photo.getId(), DownloadLinkType.GET_PHOTO);
-            String answer = "Photo has been successfully uploaded. Download link: " + downloadLink;
+            String shorterLink = shorterUrl.getShortenedUrl(downloadLink);
+            String answer = "Photo has been successfully uploaded. Download link: " + shorterLink;
 
             sendAnswer(answer, chatId);
         } catch (RuntimeException exception) {
@@ -115,7 +118,8 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         try {
             DocumentJpaDataModule document = fileService.processDocument(update.getMessage());
             String downloadLink = fileService.generateLink(document.getId(), DownloadLinkType.GET_DOCUMENT);
-            String answer = "Document has been successfully uploaded. Download link: " + downloadLink;
+            String shorterLink = shorterUrl.getShortenedUrl(downloadLink);
+            String answer = "Document has been successfully uploaded. Download link: " + shorterLink;
 
             sendAnswer(answer, chatId);
         } catch (DownloadFileException exception) {
