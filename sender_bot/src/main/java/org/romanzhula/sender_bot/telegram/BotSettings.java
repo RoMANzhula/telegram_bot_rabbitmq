@@ -12,6 +12,9 @@ public class BotSettings {
     @Value("${telegram.bot.token}")
     private String botToken;
 
+    @Value("${telegram.bot.uri}")
+    private String botUri;
+
 
     public String getBotName() {
         return botName;
@@ -19,6 +22,10 @@ public class BotSettings {
 
     public String getBotToken() {
         return botToken;
+    }
+
+    public String getBotUri() {
+        return botUri;
     }
 
 }
