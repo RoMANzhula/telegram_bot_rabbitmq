@@ -1,4 +1,4 @@
-package org.romanzhula.data_jpa.models;
+package org.romanzhula.data_common.models;
 
 import jakarta.persistence.*;
 import lombok.*;

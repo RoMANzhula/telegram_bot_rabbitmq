@@ -1,4 +1,4 @@
-package org.romanzhula.data_jpa.models;
+package org.romanzhula.data_common.models;
 
 
 import jakarta.persistence.*;
@@ -11,9 +11,9 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "documents_app")
+@Table(name = "photos_app")
 @Entity
-public class DocumentJpaDataModule {
+public class PhotoJpaDataModule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +21,10 @@ public class DocumentJpaDataModule {
 
     private String telegramId;
 
-    private String name;
-
     @OneToOne
     private BinaryJpaDataModule binaryData;
 
-    private String mimeType;
-
-    private Long fileSize;
+    private Integer fileLength;
 
     private String hashids;
 
@@ -37,19 +33,17 @@ public class DocumentJpaDataModule {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DocumentJpaDataModule that = (DocumentJpaDataModule) o;
+        PhotoJpaDataModule that = (PhotoJpaDataModule) o;
 
         return Objects.equals(telegramId, that.telegramId) &&
-                Objects.equals(name, that.name) &&
                 Objects.equals(binaryData, that.binaryData) &&
-                Objects.equals(mimeType, that.mimeType) &&
-                Objects.equals(fileSize, that.fileSize)
+                Objects.equals(fileLength, that.fileLength)
         ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(telegramId, name, binaryData, mimeType, fileSize);
+        return Objects.hash(telegramId, binaryData, fileLength);
     }
 
 }

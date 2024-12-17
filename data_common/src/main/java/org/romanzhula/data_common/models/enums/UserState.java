@@ -1,4 +1,4 @@
-package org.romanzhula.data_jpa.models.enums;
+package org.romanzhula.data_common.models.enums;
 
 public enum UserState {
 

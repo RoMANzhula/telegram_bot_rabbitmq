@@ -1,4 +1,4 @@
-package org.romanzhula.data_jpa.objects;
+package org.romanzhula.data_common.objects;
 
 import lombok.*;
 

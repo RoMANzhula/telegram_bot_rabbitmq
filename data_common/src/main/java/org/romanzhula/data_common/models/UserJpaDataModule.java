@@ -1,10 +1,11 @@
-package org.romanzhula.data_jpa.models;
+package org.romanzhula.data_common.models;
 
 
+import org.romanzhula.data_common.models.enums.UserState;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.romanzhula.data_jpa.models.enums.UserState;
+
 
 import java.time.LocalDateTime;
 import java.util.Objects;
