@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.romanzhula</groupId>
     <artifactId>mail_dispatcher</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>mail_dispatcher</name>
     <description>mail_dispatcher</description>
     <url/>
@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>22</java.version>
+        <java.version>19</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -54,8 +54,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
             <version>1.18.34</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -63,8 +63,8 @@
 
         <dependency>
             <groupId>org.romanzhula</groupId>
-            <artifactId>data_jpa</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <artifactId>data_common</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
         <!--    Testing    -->
@@ -81,6 +81,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
