@@ -1,7 +1,7 @@
 package org.romanzhula.management.services;
 
-import org.romanzhula.data_jpa.models.DocumentJpaDataModule;
-import org.romanzhula.data_jpa.models.PhotoJpaDataModule;
+import org.romanzhula.data_common.models.DocumentJpaDataModule;
+import org.romanzhula.data_common.models.PhotoJpaDataModule;
 import org.romanzhula.management.enums.DownloadLinkType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 

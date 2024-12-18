@@ -1,15 +1,15 @@
 package org.romanzhula.management.services.implementations;
 
+import org.romanzhula.data_common.models.BinaryJpaDataModule;
+import org.romanzhula.data_common.models.DocumentJpaDataModule;
+import org.romanzhula.data_common.models.PhotoJpaDataModule;
+import org.romanzhula.data_common.repositories.BinaryJpaDataModuleRepository;
+import org.romanzhula.data_common.repositories.DocumentJpaDataModuleRepository;
+import org.romanzhula.data_common.repositories.PhotoJpaDataModuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.hashids.Hashids;
 import org.json.JSONObject;
 import lombok.extern.log4j.Log4j;
-import org.romanzhula.data_jpa.models.BinaryJpaDataModule;
-import org.romanzhula.data_jpa.models.DocumentJpaDataModule;
-import org.romanzhula.data_jpa.models.PhotoJpaDataModule;
-import org.romanzhula.data_jpa.repositories.BinaryJpaDataModuleRepository;
-import org.romanzhula.data_jpa.repositories.DocumentJpaDataModuleRepository;
-import org.romanzhula.data_jpa.repositories.PhotoJpaDataModuleRepository;
 import org.romanzhula.management.enums.DownloadLinkType;
 import org.romanzhula.management.services.FileService;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +76,7 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+
     @Override
     public PhotoJpaDataModule processPhoto(Message inputFromTelegramMessage) {
         int photoSize = inputFromTelegramMessage.getPhoto().size();
@@ -104,12 +105,14 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+
     @Override
     public String generateLink(Long fileId, DownloadLinkType downloadLinkType) {
         String hashId = hashids.encode(fileId);
 
         return downloadLinkAddress + "/api/" + downloadLinkType + "?id=" + hashId;
     }
+
 
     private PhotoJpaDataModule buildTransientPhotoJpaDataModule(
             PhotoSize photoFromBot,
@@ -122,6 +125,7 @@ public class FileServiceImpl implements FileService {
                 .build()
         ;
     }
+
 
     private DocumentJpaDataModule buildTransientDocumentJpaDataModule(
             Document document,
@@ -137,6 +141,7 @@ public class FileServiceImpl implements FileService {
         ;
     }
 
+
     private BinaryJpaDataModule getPersistentBinaryData(ResponseEntity<String> responseEntity) {
         String filePath = getFilePathAsString(responseEntity);
         byte[] fileToByte = downloadFile(filePath);
@@ -147,6 +152,7 @@ public class FileServiceImpl implements FileService {
 
         return binaryJpaDataModuleRepository.save(transientBinaryContent);
     }
+
 
     private String getFilePathAsString(ResponseEntity<String> responseEntity) {
         JSONObject jsonObject = new JSONObject(responseEntity.getBody());
@@ -173,7 +179,6 @@ public class FileServiceImpl implements FileService {
             throw new RuntimeException("Failed to download file from: " + fullUri, e);
         }
     }
-
 
 
     private ResponseEntity<String> getFilePath(String fileId) {

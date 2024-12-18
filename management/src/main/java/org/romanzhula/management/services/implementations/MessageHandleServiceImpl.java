@@ -1,12 +1,12 @@
 package org.romanzhula.management.services.implementations;
 
+import org.romanzhula.data_common.models.DocumentJpaDataModule;
+import org.romanzhula.data_common.models.PhotoJpaDataModule;
+import org.romanzhula.data_common.models.UserJpaDataModule;
+import org.romanzhula.data_common.models.enums.UserState;
+import org.romanzhula.data_common.repositories.UserJpaDataModuleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.romanzhula.data_jpa.models.DocumentJpaDataModule;
-import org.romanzhula.data_jpa.models.PhotoJpaDataModule;
-import org.romanzhula.data_jpa.models.UserJpaDataModule;
-import org.romanzhula.data_jpa.models.enums.UserState;
-import org.romanzhula.data_jpa.repositories.UserJpaDataModuleRepository;
 import org.romanzhula.management.enums.DownloadLinkType;
 import org.romanzhula.management.enums.TelegramCommands;
 import org.romanzhula.management.models.MessageData;
@@ -24,7 +24,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Optional;
 
-import static org.romanzhula.data_jpa.models.enums.UserState.COMMON_STATE;
+import static org.romanzhula.data_common.models.enums.UserState.COMMON_STATE;
 import static org.romanzhula.management.enums.TelegramCommands.*;
 
 
@@ -81,6 +81,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
 
     }
 
+
     @Override
     public void processPhotoMessage(Update update) {
         saveMessageData(update);
@@ -106,6 +107,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
 
     }
 
+
     @Override
     public void processDocumentMessage(Update update) {
         saveMessageData(update);
@@ -130,6 +132,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         }
     }
 
+
     private boolean checkAllowContent(Long chatId, UserJpaDataModule userFromJpaData) {
         if (isNotAllowToBeSent(chatId, userFromJpaData)) {
             log.error("Does not allow content to be sent.");
@@ -137,6 +140,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         }
         return false;
     }
+
 
     private boolean isNotAllowToBeSent(Long chatId, UserJpaDataModule userFromJpaData) {
         UserState userState = userFromJpaData.getUserState();
@@ -158,6 +162,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         return false;
     }
 
+
     private String processTelegramCommand(UserJpaDataModule userFromJpaData, String command) {
         TelegramCommands telegramCommand = fromCommand(command);
 
@@ -177,6 +182,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
 
     }
 
+
     private String commandHelp() {
         return "List of all commands:\n" +
                 "/start - greeting message;\n" +
@@ -185,12 +191,14 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         ;
     }
 
+
     private String processStop(UserJpaDataModule userFromJpaData) {
         userFromJpaData.setUserState(COMMON_STATE);
         userJpaDataModuleRepository.save(userFromJpaData);
 
         return "Success! The command is canceled.";
     }
+
 
     private void sendAnswer(String output, Long chatId) {
         SendMessage sendMessage = new SendMessage();
@@ -200,6 +208,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
         producerService.produceAnswer(sendMessage);
     }
 
+
     private void saveMessageData(Update update) {
         MessageData messageData = MessageData.builder()
                 .event(update)
@@ -208,6 +217,7 @@ public class MessageHandleServiceImpl implements MessageHandleService {
 
         messageDataRepository.save(messageData);
     }
+
 
     private UserJpaDataModule findOrSaveUser(Update update) {
         User telegramUser = update.getMessage().getFrom();

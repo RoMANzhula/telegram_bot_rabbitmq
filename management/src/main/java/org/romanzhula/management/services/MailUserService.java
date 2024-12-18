@@ -1,6 +1,7 @@
 package org.romanzhula.management.services;
 
-import org.romanzhula.data_jpa.models.UserJpaDataModule;
+
+import org.romanzhula.data_common.models.UserJpaDataModule;
 
 public interface MailUserService {
 
