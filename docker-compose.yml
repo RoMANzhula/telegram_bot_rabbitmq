@@ -1,0 +1,162 @@
+version: '3.8'
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+  rabbitmq-data:
+    driver: local
+
+services:
+  mail-dispatcher:
+    build:
+      context: .
+      dockerfile: mail_dispatcher/Dockerfile
+    volumes:
+      - ./data_common:/app/data_common
+    container_name: mail_dispatcher
+    ports:
+      - "${MAIL_DISPATCHER_PORT}:8084"
+    networks:
+      - app
+    depends_on:
+      - rabbitmq
+    environment:
+      - SPRING_MAIL_HOST=${SPRING_MAIL_HOST}
+      - SPRING_MAIL_PORT=${SPRING_MAIL_PORT}
+      - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
+      - SPRING_MAIL_PROTOCOL=${SPRING_MAIL_PROTOCOL}
+      - MAIL_DEBUG=${MAIL_DEBUG}
+      - SPRING_MAIL_ACTIVATION_URI=${SPRING_MAIL_ACTIVATION_URI}
+      - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST}
+      - SPRING_RABBITMQ_PORT=${SPRING_RABBITMQ_PORT}
+      - SPRING_RABBITMQ_USERNAME=${SPRING_RABBITMQ_USERNAME}
+      - SPRING_RABBITMQ_PASSWORD=${SPRING_RABBITMQ_PASSWORD}
+      - RABBITMQ_QUEUE_NAME_REGISTRATION_MAIL=${RABBITMQ_QUEUE_NAME_REGISTRATION_MAIL}
+    entrypoint: ["sh", "-c", "sleep 60 && java -jar app.jar"]
+
+  management:
+    build:
+      context: .
+      dockerfile: management/Dockerfile
+    volumes:
+      - ./data_common:/app/data_common
+    container_name: management
+    ports:
+      - "${MANAGEMENT_PORT}:8082"
+    networks:
+      - app
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DIALECT=${SPRING_JPA_HIBERNATE_DIALECT}
+      - SERVER_PORT=${SERVER_PORT}
+      - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST}
+      - SPRING_RABBITMQ_PORT=${SPRING_RABBITMQ_PORT}
+      - SPRING_RABBITMQ_USERNAME=${SPRING_RABBITMQ_USERNAME}
+      - SPRING_RABBITMQ_PASSWORD=${SPRING_RABBITMQ_PASSWORD}
+      - RABBITMQ_QUEUE_NAME_TEXT=${RABBITMQ_QUEUE_NAME_TEXT}
+      - RABBITMQ_QUEUE_NAME_DOCUMENT=${RABBITMQ_QUEUE_NAME_DOCUMENT}
+      - RABBITMQ_QUEUE_NAME_PHOTO=${RABBITMQ_QUEUE_NAME_PHOTO}
+      - RABBITMQ_QUEUE_NAME_ANSWER=${RABBITMQ_QUEUE_NAME_ANSWER}
+      - RABBITMQ_QUEUE_NAME_REGISTRATION_MAIL=${RABBITMQ_QUEUE_NAME_REGISTRATION_MAIL}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_BOT_SERVICE_FILE_STORAGE_URI=${TELEGRAM_BOT_SERVICE_FILE_STORAGE_URI}
+      - TELEGRAM_BOT_SERVICE_FILE_INFO_URI=${TELEGRAM_BOT_SERVICE_FILE_INFO_URI}
+      - TELEGRAM_DOWNLOAD_LINK_ADDRESS=${TELEGRAM_DOWNLOAD_LINK_ADDRESS}
+      - HASHIDS_SALT=${HASHIDS_SALT}
+    entrypoint: ["sh", "-c", "sleep 40 && java -jar app.jar"]
+
+  rest-dispatcher:
+    build:
+      context: .
+      dockerfile: rest_dispatcher/Dockerfile
+    volumes:
+      - ./data_common:/app/data_common
+    container_name: rest_dispatcher
+    ports:
+      - "${REST_DISPATCHER_PORT}:8083"
+    networks:
+      - app
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - HASHIDS_SALT=${HASHIDS_SALT}
+    entrypoint: ["sh", "-c", "sleep 50 && java -jar app.jar"]
+
+  sender-bot:
+    build:
+      context: .
+      dockerfile: sender_bot/Dockerfile
+    container_name: sender_bot
+    ports:
+      - "${SENDER_BOT_PORT}:8080"
+    networks:
+      - app
+    depends_on:
+      - rabbitmq
+    environment:
+      - TELEGRAM_BOT_NAME=${TELEGRAM_BOT_NAME}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST}
+      - SPRING_RABBITMQ_PORT=${SPRING_RABBITMQ_PORT}
+      - SPRING_RABBITMQ_USERNAME=${SPRING_RABBITMQ_USERNAME}
+      - SPRING_RABBITMQ_PASSWORD=${SPRING_RABBITMQ_PASSWORD}
+      - RABBITMQ_QUEUE_NAME_TEXT=${RABBITMQ_QUEUE_NAME_TEXT}
+      - RABBITMQ_QUEUE_NAME_DOCUMENT=${RABBITMQ_QUEUE_NAME_DOCUMENT}
+      - RABBITMQ_QUEUE_NAME_PHOTO=${RABBITMQ_QUEUE_NAME_PHOTO}
+      - RABBITMQ_QUEUE_NAME_ANSWER=${RABBITMQ_QUEUE_NAME_ANSWER}
+      - SERVER_SSL_ENABLED=${SERVER_SSL_ENABLED}
+      - TELEGRAM_BOT_URI=${TELEGRAM_BOT_URI}
+    entrypoint: ["sh", "-c", "sleep 35 && java -jar app.jar"]
+
+  postgres:
+    image: 'postgres:15.2-alpine'
+    container_name: postgres
+    networks:
+      - app
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB} -h postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    networks:
+      - app
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_WEB_PORT}:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
