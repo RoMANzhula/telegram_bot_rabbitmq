@@ -19,4 +19,29 @@
 5. remove container (only after stop it)
     docker rm rabbitmq
 
+6. localhost:15672 - management of Rabbit
+
+
+                With docker-compose file
+
+0. if you use ngrok don't forget to change link row 32. TELEGRAM_BOT_URI - .env file
+
+1. go to data_common package:
+    terminal:   cd data_common
+                mvn clean install
+
+2. go to root package:
+    terminal:   cd ../
+
+3. run docker-compose file:
+    terminal:   docker-compose up -d
+
+4. stop and delete:
+    terminal:   docker-compose down -v
+
+    Next we need to waiting for Docker loading all images (5 minutes as an example) and we can go to testing our bot.
+
+
+    Good luck everyone!
+
 
