@@ -1,13 +1,13 @@
 package org.romanzhula.rest_dispatcher.services.implementations;
 
+import org.romanzhula.data_common.models.BinaryJpaDataModule;
+import org.romanzhula.data_common.models.DocumentJpaDataModule;
+import org.romanzhula.data_common.models.PhotoJpaDataModule;
+import org.romanzhula.data_common.repositories.DocumentJpaDataModuleRepository;
+import org.romanzhula.data_common.repositories.PhotoJpaDataModuleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FileUtils;
-import org.romanzhula.data_jpa.models.BinaryJpaDataModule;
-import org.romanzhula.data_jpa.models.DocumentJpaDataModule;
-import org.romanzhula.data_jpa.models.PhotoJpaDataModule;
-import org.romanzhula.data_jpa.repositories.DocumentJpaDataModuleRepository;
-import org.romanzhula.data_jpa.repositories.PhotoJpaDataModuleRepository;
 import org.romanzhula.rest_dispatcher.components.HashidsDecoder;
 import org.romanzhula.rest_dispatcher.exceptions.InternalServerException;
 import org.romanzhula.rest_dispatcher.exceptions.ResourceNotFoundException;
@@ -30,6 +30,7 @@ public class FileServiceImpl implements FileService {
     private final PhotoJpaDataModuleRepository photoJpaDataModuleRepository;
     private final HashidsDecoder hashidsDecoder;
 
+
     @Override
     public DocumentJpaDataModule getDocument(String documentId) {
         Long id = hashidsDecoder.getIdFromString(documentId);
@@ -43,6 +44,7 @@ public class FileServiceImpl implements FileService {
         return documentJpaDataModuleRepository.findById(id).orElse(null);
     }
 
+
     @Override
     public PhotoJpaDataModule getPhoto(String photoId) {
         Long id = hashidsDecoder.getIdFromString(photoId);
@@ -55,6 +57,7 @@ public class FileServiceImpl implements FileService {
 
         return photoJpaDataModuleRepository.findById(id).orElse(null);
     }
+
 
     @Override
     public FileSystemResource getFileSystemResource(BinaryJpaDataModule binaryData) {
@@ -74,6 +77,7 @@ public class FileServiceImpl implements FileService {
             return null;
         }
     }
+
 
     @Override
     public ResponseEntity<?> prepareDocumentResponse(String documentId) {

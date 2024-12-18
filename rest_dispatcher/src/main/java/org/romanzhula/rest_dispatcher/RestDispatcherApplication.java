@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@ComponentScan("org.romanzhula.*")
-@EnableJpaRepositories("org.romanzhula.*")
-@EntityScan("org.romanzhula.*")
+@ComponentScan("org.romanzhula")
+@EnableJpaRepositories("org.romanzhula")
+@EntityScan("org.romanzhula")
 @SpringBootApplication
 public class RestDispatcherApplication {
 

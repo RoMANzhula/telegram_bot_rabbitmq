@@ -1,9 +1,10 @@
 package org.romanzhula.rest_dispatcher.services.implementations;
 
+import org.romanzhula.data_common.models.UserJpaDataModule;
+import org.romanzhula.data_common.repositories.UserJpaDataModuleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.romanzhula.data_jpa.models.UserJpaDataModule;
-import org.romanzhula.data_jpa.repositories.UserJpaDataModuleRepository;
+
 import org.romanzhula.rest_dispatcher.components.HashidsDecoder;
 import org.romanzhula.rest_dispatcher.exceptions.InvalidUserIdException;
 import org.romanzhula.rest_dispatcher.services.ActivationUserService;
