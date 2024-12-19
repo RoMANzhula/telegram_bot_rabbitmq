@@ -26,9 +26,14 @@
         <tag/>
         <url/>
     </scm>
+
     <properties>
         <java.version>19</java.version>
+        <telegrambots.starter.version>6.7.0</telegrambots.starter.version>
+        <log4j.version>1.2.17</log4j.version>
+        <lombok.version>1.18.34</lombok.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,19 +43,19 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-spring-boot-starter</artifactId>
-            <version>6.7.0</version>
+            <version>${telegrambots.starter.version}</version>
         </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <version>${log4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -58,6 +63,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
+
+        <!--    Testing section    -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
