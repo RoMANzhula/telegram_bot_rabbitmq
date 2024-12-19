@@ -52,7 +52,7 @@ The required environment variables include:
 1. Clone the repository (terminal):
 
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/RoMANzhula/telegram_bot_rabbitmq.git>
    
 2. Build data_common module (terminal):
    
