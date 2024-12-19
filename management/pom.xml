@@ -26,9 +26,20 @@
         <tag/>
         <url/>
     </scm>
+
     <properties>
         <java.version>19</java.version>
+        <telegramsbot.starter.version>6.7.0</telegramsbot.starter.version>
+        <log4j.version>1.2.17</log4j.version>
+        <lombok.version>1.18.34</lombok.version>
+        <postgresql.version>42.7.4</postgresql.version>
+        <com.vladmihalcea.hibernate.type.version>2.21.1</com.vladmihalcea.hibernate.type.version>
+        <json.version>20240303</json.version>
+        <hashids.version>1.0.3</hashids.version>
+        <mail.version>1.4.7</mail.version>
+        <org.romanzhula.data_common.version>0.0.1</org.romanzhula.data_common.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -42,19 +53,19 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-spring-boot-starter</artifactId>
-            <version>6.7.0</version>
+            <version>${telegramsbot.starter.version}</version>
         </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <version>${log4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -66,31 +77,31 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
+            <version>${postgresql.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-60</artifactId>
-            <version>2.21.1</version>
+            <version>${com.vladmihalcea.hibernate.type.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20240303</version>
+            <version>${json.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.hashids</groupId>
             <artifactId>hashids</artifactId>
-            <version>1.0.3</version>
+            <version>${hashids.version}</version>
         </dependency>
 
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.7</version>
+            <version>${mail.version}</version>
         </dependency>
 
         <!--    app modules    -->
@@ -98,7 +109,7 @@
         <dependency>
             <groupId>org.romanzhula</groupId>
             <artifactId>data_common</artifactId>
-            <version>0.0.1</version>
+            <version>${org.romanzhula.data_common.version}</version>
         </dependency>
 
         <!--    testing    -->
