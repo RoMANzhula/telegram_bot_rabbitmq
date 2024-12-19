@@ -49,18 +49,18 @@ The required environment variables include:
 
 ### Running the Application
 
-1. Clone the repository:
+1. Clone the repository (terminal):
 
-   ```bash (terminal)
+   ```bash
    git clone <repository-url>
    
-2. Build data_common module:
+2. Build data_common module (terminal):
    
-   ```bash (terminal)
+   ```bash
    cd data_common
    mvn clean install
    
-3. Run docker-compose:
+3. Run docker-compose (terminal) - new window or command: cd ../:
 
-   ```bash (terminal) - new window or command: cd ../
+   ```bash
    docker-compose up -d
