@@ -5,7 +5,7 @@
 This is a microservices-based application that facilitates the exchange of files, photos, and text messages
 between different microservices. The application integrates a Telegram bot that handles file transfers,
 including documents and media files. The core architecture relies on RabbitMQ for message brokering, PostgreSQL
-for data persistence, and Docker for containerization.
+for data persistence, and Docker for containerization...
 
 ## Architecture
 
